@@ -9,14 +9,18 @@ public class DialogueNode
     private DialogueNode LeftNode;
     private DialogueNode RightNode;
     private string Speaker;
+    int RequireCouponID;
 
-    public DialogueNode(string Speaker, string Resume, DialogueNode LeftNode, DialogueNode RightNode)
+
+
+    public DialogueNode(string Speaker, string Resume, DialogueNode LeftNode, DialogueNode RightNode,  int RequireCouponID = 0)
     {
         this.Dialogue = new Queue<string>();
         this.Speaker = Speaker;
         this.Resume = Resume;
         this.LeftNode = LeftNode;
         this.RightNode = RightNode;
+        this.RequireCouponID = RequireCouponID;
     }
 
     public void Populate_Resume()
@@ -35,6 +39,12 @@ public class DialogueNode
         if(this.Dialogue.Count == 0)  this.Populate_Resume();
         return this.Dialogue.Dequeue();
     }
+
+
+public int get_RequiredCouponID()
+{
+    return this.RequireCouponID;
+}
 
     public DialogueNode GetLeftNode()
     {

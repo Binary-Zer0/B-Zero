@@ -30,7 +30,8 @@ public class Dialogue : MonoBehaviour
     }
 
     protected void Read_Dialogue()
-    {       
+    {  
+
             if(this.Empty()) return;
 
             if(!skip) this.skip = true;
@@ -42,6 +43,20 @@ public class Dialogue : MonoBehaviour
                 this.StartCoroutine(this.Talk_Animation( this.SpeakerController( this.mainNode.Depopulate_Dialogue() ) ) );
             }
         
+    }
+
+    public void Switch_DialogueNode()
+    {
+         if( this.mainNode.GetLeftNode() != null &&  GameMaster.Instance.get_Player().Unlocked_Achievement(this.mainNode.GetLeftNode().get_RequiredCouponID()) )
+        {
+            
+            this.Set_mainNode(this.mainNode.GetLeftNode());
+        }
+        else if ( this.mainNode.GetRightNode() != null &&  GameMaster.Instance.get_Player().Unlocked_Achievement(this.mainNode.GetRightNode().get_RequiredCouponID()) )
+        {
+            this.Set_mainNode(this.mainNode.GetRightNode());
+
+        }
     }
 
     private bool Empty()
@@ -83,6 +98,7 @@ public class Dialogue : MonoBehaviour
 
     public void Set_mainNode(DialogueNode Node)
     {
+        if(Node is null) return;
         this.mainNode = Node;
     }
 
