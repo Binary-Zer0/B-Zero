@@ -25,6 +25,8 @@ public class CameraProjection : MonoBehaviour
     public float CameraSpeed = 1.0F;
     public float ShadowLayerSpeed = .01f;
 
+    public GameObject Contain;
+
 
     // Start is called before the first frame update
     protected void Awake() 
@@ -42,7 +44,7 @@ public class CameraProjection : MonoBehaviour
     // Update is called once per frame
     void LateUpdate() 
     {
-        if(isRoomActive)this.MoveCamera();
+        if(isRoomActive && !GameMaster.Instance.PauseGame)this.MoveCamera();
         this.HideRoom();
         this.ShowRoom();
     }
@@ -61,7 +63,7 @@ public class CameraProjection : MonoBehaviour
     private void MoveCamera()
     {
 
-        if( (Mathf.Round(Vector2.Distance(MainCamera.position, Target.position )))  < 0.0f ) return;
+        if( (Mathf.Round(Vector2.Distance(MainCamera.position, Target.position )))  <= -1f ) return;
 
         this.LerpVector = Vector3.Lerp(this.MainCamera.position, this.Target.position, Time.smoothDeltaTime * this.CameraSpeed);
         this.LerpVector.z = -10 ;
@@ -70,7 +72,12 @@ public class CameraProjection : MonoBehaviour
     }
     private void HideRoom()
     {
-        if(this.ShadowLayerRender.color.a >= 1) return;
+        if(this.ShadowLayerRender.color.a >= 1) 
+        {
+            this.Contain.SetActive(false);
+            return;
+        }
+
 
         if(!isRoomActive)
         {
@@ -87,6 +94,7 @@ public class CameraProjection : MonoBehaviour
         this.AlphaColor= this.ShadowLayerRender.color;
         if(isRoomActive )
         {
+            this.Contain.SetActive(true);
             this.AlphaColor.a -= 0.5f * Time.deltaTime * this.ShadowLayerSpeed;
             this.ShadowLayerRender.color = this.AlphaColor;
         }
