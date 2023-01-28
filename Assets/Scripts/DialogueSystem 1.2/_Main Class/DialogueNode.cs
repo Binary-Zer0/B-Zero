@@ -5,22 +5,22 @@ using UnityEngine;
 public class DialogueNode 
 {
     private Queue<string> Dialogue;
-    private string Resume;
+    public string Resume;
     private DialogueNode LeftNode;
     private DialogueNode RightNode;
     private string Speaker;
-    int RequireCouponID;
+    int RequiredAchievementID;
 
 
 
-    public DialogueNode(string Speaker, string Resume, DialogueNode LeftNode, DialogueNode RightNode,  int RequireCouponID = 0)
+    public DialogueNode(string Speaker, string Resume, DialogueNode LeftNode, DialogueNode RightNode,  int RequiredAchievementID = 0)
     {
         this.Dialogue = new Queue<string>();
         this.Speaker = Speaker;
         this.Resume = Resume;
         this.LeftNode = LeftNode;
         this.RightNode = RightNode;
-        this.RequireCouponID = RequireCouponID;
+        this.RequiredAchievementID = RequiredAchievementID;
     }
 
     public void Populate_Resume()
@@ -41,9 +41,9 @@ public class DialogueNode
     }
 
 
-public int get_RequiredCouponID()
+public int get_RequiredAchievementID()
 {
-    return this.RequireCouponID;
+    return this.RequiredAchievementID;
 }
 
     public DialogueNode GetLeftNode()

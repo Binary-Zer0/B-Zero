@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class LettersDialogue : Dialogue
+public class LettersDialogue : Dialogue, InterfaceQuestEventHandler
 {
     bool isActivated = false;
     
@@ -19,8 +19,6 @@ public class LettersDialogue : Dialogue
     {
         if(Input.GetKeyDown(KeyCode.Space) && this.isActivated)
         {
-                Debug.Log("ENTER 2");
-
             base.Read_Dialogue();
         }
         
@@ -30,7 +28,6 @@ public class LettersDialogue : Dialogue
     {
         if(other.tag == "Player")
         {
-            Debug.Log("ENTER");
             this.isActivated = true;
         }
     }
@@ -39,6 +36,22 @@ public class LettersDialogue : Dialogue
          if(other.tag == "Player")
         {
             this.isActivated = false;
+        }
+    }
+
+    public void Preprocess_Quest()
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public void Postprocess_Quest()
+    {
+            if(!GameMaster.Instance.get_Player().Contain_Achievement(11) )
+        {
+             //GameMaster.Instance.get_Player().Add_Achievement(new Achievement (11, "Fridge Fixed"));
+            //GameMaster.Instance.get_Player().Add_Coupon(new Coupon (111, "Cat Quest Coupon"));
+            GameMaster.Instance.get_Player().Add_Goal(new Goal(11, "Fixed fridge"));
+
         }
     }
 }

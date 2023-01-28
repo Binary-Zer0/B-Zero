@@ -5,25 +5,19 @@ using TMPro;
 
 public class Dialogue : MonoBehaviour
 {
-
-    [SerializeField]
-    private GameObject DialogueBox;
     private TMP_Text DialogueSpeakerText;
     private TMP_Text DialogueText;
-
     protected DialogueNode mainNode;
-
     private bool goNext;
     private bool skip;
     private bool EndDialogue = false;
-
     [SerializeField]
     protected float DialogueSpeed;
     void Start()
     {
-        this.DialogueSpeakerText = this.DialogueBox.GetComponentsInChildren<TMP_Text>()[0];
-        this.DialogueText = this.DialogueBox.GetComponentsInChildren<TMP_Text>()[1];
-        this.DialogueBox.gameObject.SetActive(false);
+        this.DialogueSpeakerText = GameMaster.Instance.get_DialogueBox().GetComponentsInChildren<TMP_Text>()[0];
+        this.DialogueText = GameMaster.Instance.get_DialogueBox().GetComponentsInChildren<TMP_Text>()[1];
+        GameMaster.Instance.get_DialogueBox().gameObject.SetActive(false);
         this.DialogueSpeed = 0.05f;
         this.goNext = true;
         this.skip = false;
@@ -38,24 +32,21 @@ public class Dialogue : MonoBehaviour
 
             if(goNext)
             {
-                this.DialogueBox.gameObject.SetActive(true);
+                GameMaster.Instance.get_DialogueBox().gameObject.SetActive(true);
                 StopAllCoroutines();
-                this.StartCoroutine(this.Talk_Animation( this.SpeakerController( this.mainNode.Depopulate_Dialogue() ) ) );
+                this.StartCoroutine(this.Talk_Animation( this.mainNode.Depopulate_Dialogue() ) ) ;
             }
-        
     }
 
     public void Switch_DialogueNode()
     {
-         if( this.mainNode.GetLeftNode() != null &&  GameMaster.Instance.get_Player().Unlocked_Achievement(this.mainNode.GetLeftNode().get_RequiredCouponID()) )
-        {
-            
+         if( this.mainNode.GetLeftNode() != null &&  GameMaster.Instance.get_Player().Contain_Achievement(this.mainNode.GetLeftNode().get_RequiredAchievementID()) )
+        {  
             this.Set_mainNode(this.mainNode.GetLeftNode());
         }
-        else if ( this.mainNode.GetRightNode() != null &&  GameMaster.Instance.get_Player().Unlocked_Achievement(this.mainNode.GetRightNode().get_RequiredCouponID()) )
+        else if ( this.mainNode.GetRightNode() != null &&  GameMaster.Instance.get_Player().Contain_Achievement(this.mainNode.GetRightNode().get_RequiredAchievementID()) )
         {
             this.Set_mainNode(this.mainNode.GetRightNode());
-
         }
     }
 
@@ -63,7 +54,7 @@ public class Dialogue : MonoBehaviour
     {
              if(this.mainNode.GetDialogueCount() == 0 && goNext) 
             {
-                this.DialogueBox.gameObject.SetActive(false);
+                GameMaster.Instance.get_DialogueBox().SetActive(false);
                 this.mainNode.Populate_Resume();
                 this.EndDialogue = true;
                 return true;
@@ -74,10 +65,14 @@ public class Dialogue : MonoBehaviour
 
     private IEnumerator Talk_Animation( string Word)
     {
-        this.goNext = false;
-        this.skip = false;
-        this.EndDialogue = false;
         this.DialogueText.text = "";
+        this.goNext = false;
+        this.EndDialogue = false;
+
+        yield return this.CutScene_Controller(Word);
+
+        this.skip = false;
+        Word = this.Dialogue_Filter(Word);
         foreach(char c in Word)
         {
             if(skip)
@@ -101,17 +96,26 @@ public class Dialogue : MonoBehaviour
         if(Node is null) return;
         this.mainNode = Node;
     }
-
-    private string SpeakerController( string word)
+    
+    IEnumerator CutScene_Controller( string word)
+    {   if(word[0] == '>')
     {
+        yield return GameMaster.Instance.CutSceneRegistre[word].Body();
+    }
+    }
+
+    private string Dialogue_Filter( string word)
+    {   
+         if(word[0] == '>')
+         {
+            word = this.mainNode.Depopulate_Dialogue();
+         }
         if(word[word.Length-1] == ':')
         {
             this.DialogueSpeakerText.text = word;
             return this.mainNode.Depopulate_Dialogue();
         }
-    
         else return word;
-
     }
     public bool get_Dialogueend()
     {
