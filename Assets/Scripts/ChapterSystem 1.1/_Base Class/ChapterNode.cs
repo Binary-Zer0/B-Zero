@@ -4,23 +4,30 @@ using UnityEngine;
 
 public class ChapterNode 
 {
-    int Id;
     string Name;
     string Description;
-    List<GameObject> Story;
     ChapterNode LeftChapter;
     ChapterNode RightChapter;
+    int RequiredAchievementID;
+    int RequireGoalID;
+    int ObjectEventHandlerID;
 
-    public ChapterNode(int Id, string Name, string Description, ChapterNode LeftChapter, ChapterNode RightChapter)
+    List<GameObject> Story;
+
+    public ChapterNode(string Name, string Description,ChapterNode LeftChapter, ChapterNode RightChapter, int RequireGoalID = 0, int RequiredAchievementID = 0)
     {
-        this.Id = Id;
         this.Name = Name;
         this.Description = Description;
         this.LeftChapter = LeftChapter;
         this.RightChapter = RightChapter;
 
         this.Story = new List<GameObject>();
-        GameMaster.Instance.chapters.Add(this.Id, this);
+
+        this.RequiredAchievementID = RequiredAchievementID;
+        this.RequireGoalID = RequireGoalID;
+        
+        if(RequireGoalID != 0)GameMaster.Instance.chapters.Add(this.RequireGoalID, this);
+
     }
 
     public void Enable_Story()
@@ -43,11 +50,6 @@ public class ChapterNode
         this.Story.Add(Obj);
     }
 
-    public int get_ID()
-    {
-        return this.Id;
-    }
-
     public ChapterNode get_Leftchapter()
     {
         return this.LeftChapter;
@@ -56,5 +58,16 @@ public class ChapterNode
     {
         return this.RightChapter;
     }
+
+     public int get_RequireGoalID()
+    {
+        return this.RequireGoalID;
+    }
+
+     public int get_RequiredAchievementID()
+    {
+        return this.RequiredAchievementID;
+    }
+
 
 }
