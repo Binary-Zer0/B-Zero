@@ -23,14 +23,14 @@ public abstract class CutScene : MonoBehaviour
     public void Disable_Dialogue()
     {
      
-        this.GetComponent<Dialogue>().enabled = false;
+        Dialogue.GetComponent<Dialogue>().enabled = false;
         GameMaster.Instance.get_DialogueBox().SetActive(false);
         
     }
     public void Enable_Dialogue()
     {
         GameMaster.Instance.get_DialogueBox().SetActive(true);
-        this.GetComponent<Dialogue>().enabled = true;
+        Dialogue.GetComponent<Dialogue>().enabled = true;
     }
     public void End_cutScene()
     {
@@ -89,7 +89,7 @@ public abstract class CutScene : MonoBehaviour
     public void Move_West(GameObject Obj)
     {
         if(!this.canMoveWest) return;
-        if( Mathf.Round (this.Distance -Obj.transform.localPosition.y) == 0 ) 
+        if( Mathf.Round (this.Distance -Obj.transform.localPosition.x) == 0 ) 
         {
             this.canMoveWest = false;
             return;
@@ -124,11 +124,11 @@ public abstract class CutScene : MonoBehaviour
     
     public void Look_East(GameObject Obj)
     {  
-        Obj.transform.localScale = new Vector3(-1f,1f, 1f);
+        Obj.transform.localScale = new Vector2 ( -1 * Obj.transform.localScale.x,  Obj.transform.localScale.y);
     }
     public void Look_West(GameObject Obj)
     {
-        Obj.transform.localScale = new Vector3(1f, 1f, 1f);
+        Obj.transform.localScale = new Vector2 ( -1 * Obj.transform.localScale.x,  Obj.transform.localScale.y);
     }
 
    
