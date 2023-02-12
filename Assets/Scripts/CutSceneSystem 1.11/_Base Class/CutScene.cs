@@ -34,7 +34,7 @@ public abstract class CutScene : MonoBehaviour
     }
     public void End_cutScene()
     {
-        this.Watched = true;
+        //this.Watched = true;
         GameMaster.Instance.PauseGame = false;
         this.MoveCamera = false;
 
@@ -123,12 +123,13 @@ public abstract class CutScene : MonoBehaviour
     }
     
     public void Look_East(GameObject Obj)
-    {  
-        Obj.transform.localScale = new Vector2 ( -1 * Obj.transform.localScale.x,  Obj.transform.localScale.y);
+    {   if(Obj.transform.localScale.x < 0) Obj.transform.localScale = new Vector2 ( Obj.transform.localScale.x,  Obj.transform.localScale.y);
+        else Obj.transform.localScale = new Vector2 ( -1 * Obj.transform.localScale.x,  Obj.transform.localScale.y);
+        
     }
     public void Look_West(GameObject Obj)
-    {
-        Obj.transform.localScale = new Vector2 ( -1 * Obj.transform.localScale.x,  Obj.transform.localScale.y);
+    {   if(Obj.transform.localScale.x > 0) Obj.transform.localScale = new Vector2 ( Obj.transform.localScale.x,  Obj.transform.localScale.y);
+        else Obj.transform.localScale = new Vector2 ( -1 * Obj.transform.localScale.x,  Obj.transform.localScale.y);
     }
 
    
