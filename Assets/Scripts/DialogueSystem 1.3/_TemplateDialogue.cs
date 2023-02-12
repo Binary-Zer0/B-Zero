@@ -16,12 +16,10 @@ public class _TemplateDialogue : Dialogue
     }
 
     // Update is called once per frame
-    void Update()
-    {
-        if(Input.GetKeyDown(KeyCode.Space) && this.isTrigged)
-        {
-            base.Read_Dialogue();
-        }
+    public override void Execute()     {
+      
+        base.Read_Dialogue();
+        
         
     }
 
@@ -29,14 +27,14 @@ public class _TemplateDialogue : Dialogue
     {
         if(other.tag == "Player")
         {
-            this.isTrigged = true;
+            base.Add_Self_Dialogue();
         }
     }
     private void OnTriggerExit2D(Collider2D other) 
     {
          if(other.tag == "Player")
         {
-            this.isTrigged = false;
+            base.Remove_Self_Dialogue();
         }
     }
 }

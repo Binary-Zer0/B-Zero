@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 
-public class Dialogue : MonoBehaviour
+public abstract class Dialogue : MonoBehaviour
 {
     private TMP_Text DialogueSpeakerText;
     private TMP_Text DialogueText;
@@ -11,51 +11,70 @@ public class Dialogue : MonoBehaviour
     private bool goNext;
     private bool skip;
     private bool EndDialogue = false;
+    protected bool startDialogue = false;
     [SerializeField]
     protected float DialogueSpeed;
+    
     void Start()
     {
-        this.DialogueSpeakerText = GameMaster.Instance.get_DialogueBox().GetComponentsInChildren<TMP_Text>()[0];
-        this.DialogueText = GameMaster.Instance.get_DialogueBox().GetComponentsInChildren<TMP_Text>()[1];
-        GameMaster.Instance.get_DialogueBox().gameObject.SetActive(false);
+        this.DialogueSpeakerText = GameMaster.Instance.get_DialogueBox().GetComponentsInChildren<TMP_Text>()[0]; //Dependance.
+        this.DialogueText = GameMaster.Instance.get_DialogueBox().GetComponentsInChildren<TMP_Text>()[1]; //Dependance.
+        GameMaster.Instance.get_DialogueBox().gameObject.SetActive(false); //Dependance.
         this.DialogueSpeed = 0.05f;
         this.goNext = true;
         this.skip = false;
     }
 
-    protected void Read_Dialogue()
-    {  
+    public abstract void Execute();
 
+    protected void Add_Self_Dialogue()
+    {
+        GameMaster.Instance.get_Player().DialogueStack.Push(this);
+    }
+    protected void Remove_Self_Dialogue()
+    {
+        GameMaster.Instance.get_Player().DialogueStack.Pop();
+    }
+
+
+
+    public  void Read_Dialogue()
+    {  
             if(this.Empty()) return;
+
+            this.startDialogue = true;
+            GameMaster.Instance.get_Player().onDiscussion = true; //Dependance.
 
             if(!skip) this.skip = true;
 
             if(goNext)
             {
-                GameMaster.Instance.get_DialogueBox().gameObject.SetActive(true);
+                GameMaster.Instance.get_DialogueBox().gameObject.SetActive(true); //Dependance.
                 StopAllCoroutines();
                 this.StartCoroutine(this.Talk_Animation( this.mainNode.Depopulate_Dialogue() ) ) ;
             }
     }
 
-    public void Switch_DialogueNode()
+    public void Switch_DialogueNode() //Dependance.
     {
-         if( this.mainNode.GetLeftNode() != null &&  GameMaster.Instance.get_Player().Contain_Achievement(this.mainNode.GetLeftNode().get_RequiredAchievementID()) )
+         if( this.mainNode.GetLeftNode() != null &&  GameMaster.Instance._AchievementManager.Contain_Achievement(this.mainNode.GetLeftNode().get_RequiredAchievementID()) )
         {  
             this.Set_mainNode(this.mainNode.GetLeftNode());
         }
-        else if ( this.mainNode.GetRightNode() != null &&  GameMaster.Instance.get_Player().Contain_Achievement(this.mainNode.GetRightNode().get_RequiredAchievementID()) )
+        else if ( this.mainNode.GetRightNode() != null &&  GameMaster.Instance._AchievementManager.Contain_Achievement(this.mainNode.GetRightNode().get_RequiredAchievementID()) )
         {
             this.Set_mainNode(this.mainNode.GetRightNode());
         }
     }
 
-    private bool Empty()
+    private bool Empty() //Dependance.
     {
              if(this.mainNode.GetDialogueCount() == 0 && goNext) 
             {
                 GameMaster.Instance.get_DialogueBox().SetActive(false);
+                GameMaster.Instance.get_Player().onDiscussion = false;
                 this.mainNode.Populate_Resume();
+                this.startDialogue = false;
                 this.EndDialogue = true;
                 return true;
             }
@@ -97,7 +116,7 @@ public class Dialogue : MonoBehaviour
         this.mainNode = Node;
     }
     
-    IEnumerator CutScene_Controller( string word)
+    IEnumerator CutScene_Controller( string word) //Dependance.
     {   if(word[0] == '>')
     {
         yield return GameMaster.Instance.CutSceneRegistre[word].Body();

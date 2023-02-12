@@ -40,6 +40,14 @@ public class DialogueNode
         return this.Dialogue.Dequeue();
     }
 
+    public void Reset_DialogueNode()
+    {
+        while(this.Dialogue.Count != 0)
+        {
+            this.Dialogue.Dequeue();
+        }
+    }
+
 
 public int get_RequiredAchievementID()
 {
