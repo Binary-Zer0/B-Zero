@@ -36,7 +36,7 @@ public class DialogueNode
 
     public string Depopulate_Dialogue()
     {
-        if(this.Dialogue.Count == 0)  this.Populate_Resume();
+        if(this.Dialogue.Count == 0)  return "...";
         return this.Dialogue.Dequeue();
     }
 

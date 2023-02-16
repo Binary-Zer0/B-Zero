@@ -90,6 +90,8 @@ public abstract class Dialogue : MonoBehaviour
 
         yield return this.CutScene_Controller(Word);
 
+        yield return this.Choice_Controller(Word);
+
         this.skip = false;
         Word = this.Dialogue_Filter(Word);
         foreach(char c in Word)
@@ -122,20 +124,33 @@ public abstract class Dialogue : MonoBehaviour
         yield return GameMaster.Instance.CutSceneRegistre[word].Body();
     }
     }
+    IEnumerator Choice_Controller( string word) //Dependance.
+    {   if(word[0] == '*')
+    {   GameMaster.Instance.ChoicesRegistre[word[word.Length-1]].Execute();
+        yield return new WaitUntil( () => GameMaster.Instance.ChoicesRegistre[word[word.Length-1]].isChoiceDone );
+        this.Switch_DialogueNode();
+    }
+    }
 
     private string Dialogue_Filter( string word)
     {   
-         if(word[0] == '>')
+        if(word[0] == '>')
+         {
+            word = this.mainNode.Depopulate_Dialogue();
+         }
+        if(word[0] == '*')
          {
             word = this.mainNode.Depopulate_Dialogue();
          }
         if(word[word.Length-1] == ':')
         {
             this.DialogueSpeakerText.text = word;
-            return this.mainNode.Depopulate_Dialogue();
+            word = this.mainNode.Depopulate_Dialogue();
         }
-        else return word;
+        
+         return word;
     }
+    
     public bool get_Dialogueend()
     {
         return this.EndDialogue;
