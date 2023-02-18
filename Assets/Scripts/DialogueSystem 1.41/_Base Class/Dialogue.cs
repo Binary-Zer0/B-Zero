@@ -49,7 +49,6 @@ public abstract class Dialogue : MonoBehaviour
 
             if(goNext)
             {
-                GameMaster.Instance.get_DialogueBox().gameObject.SetActive(true); //Dependance.
                 StopAllCoroutines();
                 this.StartCoroutine(this.Talk_Animation( this.mainNode.Depopulate_Dialogue() ) ) ;
             }
@@ -84,16 +83,18 @@ public abstract class Dialogue : MonoBehaviour
 
     private IEnumerator Talk_Animation( string Word)
     {
-        this.DialogueText.text = "";
         this.goNext = false;
         this.EndDialogue = false;
 
+        yield return this.Choice_Controller(Word);
         yield return this.CutScene_Controller(Word);
 
-        yield return this.Choice_Controller(Word);
-
         this.skip = false;
+        this.DialogueText.text = "";
+
         Word = this.Dialogue_Filter(Word);
+        GameMaster.Instance.get_DialogueBox().gameObject.SetActive(true); //Dependance.
+
         foreach(char c in Word)
         {
             if(skip)
